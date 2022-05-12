@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aline-account
+  labels:
+    app: aline-account
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aline-account
+  template:
+    metadata:
+      labels:
+        app: aline-account
+    spec:
+      containers:
+      - name: aline-account
+        image: stephenfreed/aline-account-microservice:v0.1.0
+        ports:
+        - containerPort: 8074
+        env:
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: aline-secret
+              key: MYSQL_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: aline-secret
+              key: MYSQL_PASSWORD
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aline-secret
+              key: SECRET_KEY
+        - name: DB_CONTAINER_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: aline-config
+              key: MYSQL_SERVICE_NAME
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: aline-account
+spec:
+  type: NodePort
+  selector:
+    app: aline-account
+  ports:
+    - protocol: TCP
+      port: 8074
+      targetPort: 8074
+      nodePort: 30005
+

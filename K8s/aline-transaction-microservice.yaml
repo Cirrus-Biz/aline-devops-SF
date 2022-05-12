@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aline-transaction
+  labels:
+    app: aline-transaction
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aline-transaction
+  template:
+    metadata:
+      labels:
+        app: aline-transaction
+    spec:
+      containers:
+      - name: aline-transaction
+        image: stephenfreed/aline-transaction-microservice:v0.1.0
+        ports:
+        - containerPort: 8073
+        env:
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: aline-secret
+              key: MYSQL_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: aline-secret
+              key: MYSQL_PASSWORD
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aline-secret
+              key: SECRET_KEY
+        - name: DB_CONTAINER_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: aline-config
+              key: MYSQL_SERVICE_NAME
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: aline-transaction
+spec:
+  type: NodePort
+  selector:
+    app: aline-transaction
+  ports:
+    - protocol: TCP
+      port: 8073
+      targetPort: 8073
+      nodePort: 30004
+

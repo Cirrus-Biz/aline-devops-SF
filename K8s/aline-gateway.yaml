@@ -1,0 +1,69 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aline-gatway
+  labels:
+    app: aline-gateway
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aline-gateway
+  template:
+    metadata:
+      labels:
+        app: aline-gateway
+    spec:
+      containers:
+      - name: aline-gateway
+        image: stephenfreed/aline-gateway:v0.1.0
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DOCKER0_IP
+          valueFrom:
+            configMapKeyRef:
+              name: aline-config
+              key: DOCKER0_IP
+        - name: USER_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: aline-config
+              key: USER_PORT
+        - name: UNDERWRITER_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: aline-config
+              key: UNDERWRITER_PORT
+        - name: BANK_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: aline-config
+              key: BANK_PORT
+        - name: TRANSACTION_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: aline-config
+              key: TRANSACTION_PORT
+        - name: ACCOUNT_PORT
+          valueFrom:
+            configMapKeyRef:
+              name: aline-config
+              key: ACCOUNT_PORT
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: aline-gateway
+spec:
+  type: NodePort
+  selector:
+    app: aline-gateway
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+      nodePort: 30000
+

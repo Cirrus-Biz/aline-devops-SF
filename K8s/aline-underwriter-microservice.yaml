@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aline-underwriter
+  labels:
+    app: aline-underwriter
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aline-underwriter
+  template:
+    metadata:
+      labels:
+        app: aline-underwriter
+    spec:
+      containers:
+      - name: aline-underwriter
+        image: stephenfreed/aline-underwriter-microservice:v0.1.0
+        ports:
+        - containerPort: 8071
+        env:
+        - name: DB_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: aline-secret
+              key: MYSQL_USER
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: aline-secret
+              key: MYSQL_PASSWORD
+        - name: SECRET_KEY
+          valueFrom:
+            secretKeyRef:
+              name: aline-secret
+              key: SECRET_KEY
+        - name: DB_CONTAINER_NAME
+          valueFrom:
+            configMapKeyRef:
+              name: aline-config
+              key: MYSQL_SERVICE_NAME
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: aline-underwriter
+spec:
+  type: NodePort
+  selector:
+    app: aline-underwriter
+  ports:
+    - protocol: TCP
+      port: 8071
+      targetPort: 8071
+      nodePort: 30002
+
