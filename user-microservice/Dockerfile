@@ -2,7 +2,7 @@ FROM amazoncorretto:17-alpine3.15
 
 WORKDIR /app
 
-ADD ./user-microservice-*.jar user-microservice.jar
+ADD ./target/user-microservice-*.jar user-microservice.jar
 
 ENV SERVICE_NAME="user"
 RUN addgroup --gid 1001 -S $SERVICE_NAME && \
@@ -13,3 +13,4 @@ EXPOSE 8070
 USER $SERVICE_NAME
 
 ENTRYPOINT ["java", "-jar", "user-microservice.jar"]
+

@@ -2,7 +2,7 @@ FROM amazoncorretto:17-alpine3.15
 
 WORKDIR /app
 
-ADD aline-gateway-*.jar aline-gateway.jar
+ADD ./target/aline-gateway-*.jar aline-gateway.jar
 
 ENV SERVICE_NAME="gateway"
 RUN addgroup --gid 1001 -S $SERVICE_NAME && \
@@ -13,5 +13,3 @@ EXPOSE 8080
 USER $SERVICE_NAME
 
 ENTRYPOINT ["java", "-jar", "aline-gateway.jar"]
-
-

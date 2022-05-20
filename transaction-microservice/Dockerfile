@@ -2,7 +2,7 @@ FROM amazoncorretto:17-alpine3.15
 
 WORKDIR /app
 
-ADD ./transaction-microservice-*.jar transaction-microservice.jar
+ADD ./target/transaction-microservice-*.jar transaction-microservice.jar
 
 ENV SERVICE_NAME="transaction"
 RUN addgroup --gid 1001 -S $SERVICE_NAME && \

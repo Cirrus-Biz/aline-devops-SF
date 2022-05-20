@@ -2,7 +2,7 @@ FROM amazoncorretto:17-alpine3.15
 
 WORKDIR /app
 
-ADD ./underwriter-microservice-*.jar underwriter-microservice.jar
+ADD ./target/underwriter-microservice-*.jar underwriter-microservice.jar
 
 ENV SERVICE_NAME="underwriter"
 RUN addgroup --gid 1001 -S $SERVICE_NAME && \
@@ -13,3 +13,4 @@ EXPOSE 8071
 USER $SERVICE_NAME
  
 ENTRYPOINT ["java", "-jar", "underwriter-microservice.jar"]
+
