@@ -14,8 +14,10 @@ fake = Faker()
 load_dotenv(find_dotenv())
 BEARER_TOKEN = os.environ.get("BEARER_TOKEN")
 HOST = os.environ.get("HOST")
+UNDERWRITER_SERVICE_PORT = os.environ.get("UNDERWRITER_SERVICE_PORT")
+UNDERWRITER_TEST_PORT = os.environ.get("UNDERWRITER_TEST_PORT")
 
-BASE = f"http://{HOST}"
+BASE = f"{HOST}"
 headers = {"Authorization": f"Bearer {BEARER_TOKEN}"}
 
 class Tests(unittest.TestCase):
@@ -24,7 +26,7 @@ class Tests(unittest.TestCase):
 
     # checks underwriter endpoint is healthy
     def test_check_connection_health(self):
-        health_response = requests.get(BASE + ":8071/health", headers=headers)
+        health_response = requests.get(BASE + f"{UNDERWRITER_TEST_PORT}/health", headers=headers)
         statuscode = health_response.status_code
         self.assertEqual(statuscode, 200)
 
@@ -33,11 +35,11 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(zipcode), 5)
 
     def test_applications(self):
-        get_banks = requests.get(BASE + ":8080/api/applications", headers=headers)
+        get_banks = requests.get(BASE + f"{UNDERWRITER_TEST_PORT}/applications", headers=headers)
         get_banks_status_code = get_banks.status_code
         self.assertEqual(get_banks_status_code, 200)
 
     def test_applicants(self):
-        get_banks = requests.get(BASE + ":8080/api/applicants", headers=headers)
+        get_banks = requests.get(BASE + f"{UNDERWRITER_SERVICE_PORT}/applicants", headers=headers)
         get_banks_status_code = get_banks.status_code
         self.assertEqual(get_banks_status_code, 200)

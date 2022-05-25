@@ -10,8 +10,11 @@ fake = Faker()
 load_dotenv(find_dotenv())
 BEARER_TOKEN = os.environ.get("BEARER_TOKEN")
 HOST = os.environ.get("HOST")
+USERS_SERVICE_PORT = os.environ.get("USERS_SERVICE_PORT")
+BANKS_SERVICE_PORT = os.environ.get("BANKS_SERVICE_PORT")
 
-BASE = f"http://{HOST}:8080/api"
+USERS_BASE = f"{HOST}{USERS_SERVICE_PORT}"
+BANKS_SERVICE_PORT = f"{HOST}{BANKS_SERVICE_PORT}"
 headers = {"Authorization": f"Bearer {BEARER_TOKEN}"}
 
 
@@ -35,13 +38,13 @@ def create_members():
                 selection = False
 
                 # creates dict of all users on first page
-                get_users = requests.get(BASE + "/users", headers=headers)
+                get_users = requests.get(USERS_BASE + "/users", headers=headers)
                 users_dict = get_users.json()
 
                 # gets the paginated JSON and adds to original dict
                 number_of_pages = get_users.json()["totalPages"]
                 for i in range(1, number_of_pages):
-                    get_page = requests.get(BASE + f"/users/?page={i}", headers=headers)
+                    get_page = requests.get(USERS_BASE + f"/users/?page={i}", headers=headers)
                     get_page_dict = get_page.json()
 
                     # adds dict record to original dictionary to parse later
@@ -62,7 +65,7 @@ def create_members():
                         user_member_id_list.append(current_user_member_id)
 
                 # creates dict of all available members
-                get_members = requests.get(BASE + "/members", headers=headers)
+                get_members = requests.get(BANKS_SERVICE_PORT + "/members", headers=headers)
                 members_dict = get_members.json()
 
                 # builds list of valid member id's not in users
@@ -100,7 +103,7 @@ def create_members():
 
                     print("\nThat Was Not A Valid Membership ID Try Again...\n")
 
-                get_members = requests.get(BASE + f"/members/{selection_membership_id}", headers=headers)
+                get_members = requests.get(BANKS_SERVICE_PORT + f"/members/{selection_membership_id}", headers=headers)
                 member_info_dict = get_members.json()
 
                 user_membership_id = member_info_dict["membershipId"]
@@ -126,7 +129,7 @@ def create_members():
                             }                       
 
                 # posts data to endpoint
-                response = requests.post(BASE + "/users/registration", json=payload, headers=headers)
+                response = requests.post(USERS_BASE + "/users/registration", json=payload, headers=headers)
 
                 # parses data from return JSON
                 users_id = response.json()["id"]
