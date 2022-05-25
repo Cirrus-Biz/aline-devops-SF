@@ -14,8 +14,10 @@ fake = Faker()
 load_dotenv(find_dotenv())
 BEARER_TOKEN = os.environ.get("BEARER_TOKEN")
 HOST = os.environ.get("HOST")
+BANKS_SERVICE_PORT = os.environ.get("BANKS_SERVICE_PORT")
+BANKS_TEST_PORT = os.environ.get("BANKS_TEST_PORT")
 
-BASE = f"http://{HOST}"
+BASE = f"{HOST}"
 headers = {"Authorization": f"Bearer {BEARER_TOKEN}"}
 
 class Tests(unittest.TestCase):
@@ -24,7 +26,7 @@ class Tests(unittest.TestCase):
 
     # checks banks and branches endpoint is healthy
     def test_check_connection_health(self):
-        health_response = requests.get(BASE + ":8072/health", headers=headers)
+        health_response = requests.get(BASE + f"{BANKS_TEST_PORT}/health", headers=headers)
         statuscode = health_response.status_code
         self.assertEqual(statuscode, 200)
 
@@ -33,13 +35,13 @@ class Tests(unittest.TestCase):
         self.assertEqual(len(zipcode), 5)
 
     def test_banks(self):
-        get_banks = requests.get(BASE + ":8080/api/banks", headers=headers)
+        get_banks = requests.get(BASE + f"{BANKS_SERVICE_PORT}/banks", headers=headers)
         get_banks_status_code = get_banks.status_code
         self.assertEqual(get_banks_status_code, 200)
 
 
     def test_branches(self):
-        get_branches = requests.get(BASE + ":8080/api/branches", headers=headers)
+        get_branches = requests.get(BASE + f"{BANKS_SERVICE_PORT}/branches", headers=headers)
         get_branches_status_code = get_branches.status_code
         self.assertEqual(get_branches_status_code, 200)
 

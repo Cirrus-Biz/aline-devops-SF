@@ -1,2 +1,3 @@
 python_scripts_env/
 .env
+.env_hosts

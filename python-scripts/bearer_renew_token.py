@@ -9,28 +9,17 @@
 """
 
 import os
-import sys
 import requests
 from datetime import datetime
 from dotenv import load_dotenv, find_dotenv
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
 
-load_dotenv(find_dotenv())
-ADCU_LOADBALANCER_DNS = os.environ.get("ADCU_LOADBALANCER_DNS")
+load_dotenv(f"{dir_path}/.env_hosts")
+HOST = os.environ.get("HOST")
+USERS_SERVICE_PORT = os.environ.get("USERS_SERVICE_PORT")
 
-
-
-# ~~~~ Edit Here Add One Host Name Variable That Is Your Hostname ~~~~
-
-# HOST = "127.0.0.1"
-HOST = "docker-compose-lb-c7f7aeb0b809773c.elb.us-east-1.amazonaws.com"
-
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-
-
-BASE = f"http://{HOST}:8080/api"
+BASE = f"{HOST}{USERS_SERVICE_PORT}"
 
 def renew_bearer():
     try:
@@ -69,10 +58,20 @@ def renew_bearer():
         response_headers = response.headers
         bearer_token = response_headers["Authorization"][7:]
 
-        # writes to .env file
+        # clears .env file and writes new bearer token to it
         with open(f"{dir_path}/.env", "w") as my_file:
-            my_file.write(f"BEARER_TOKEN={bearer_token}\nHOST={HOST}")
+            my_file.write(f"BEARER_TOKEN={bearer_token}\n")
+            
+        # reads lines from .env_hosts 
+        with open(f"{dir_path}/.env_hosts", "r") as my_file:
+            hosts_file_lines = my_file.read()
 
+        # appends lines in .env_hosts to .env after bearer token
+        with open(f"{dir_path}/.env", "a") as my_file:
+            for line in hosts_file_lines:
+                my_file.write(line)
+
+        # writes info to log file
         with open(f"{dir_path}/bearer_log.txt", "a") as my_file:
             todays_date = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
             my_file.write(f"BEARER_TOKEN renewed on {todays_date}\n")

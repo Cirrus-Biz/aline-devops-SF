@@ -10,8 +10,9 @@ fake = Faker()
 load_dotenv(find_dotenv())
 BEARER_TOKEN = os.environ.get("BEARER_TOKEN")
 HOST = os.environ.get("HOST")
+USERS_SERVICE_PORT = os.environ.get("USERS_SERVICE_PORT")
 
-BASE = f"http://{HOST}:8080/api"
+BASE = f"{HOST}{USERS_SERVICE_PORT}"
 headers = {"Authorization": f"Bearer {BEARER_TOKEN}"}
 
 

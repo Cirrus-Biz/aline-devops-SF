@@ -11,8 +11,13 @@ sys.path.append(dir_path)
 load_dotenv(find_dotenv())
 BEARER_TOKEN = os.environ.get("BEARER_TOKEN")
 HOST = os.environ.get("HOST")
+BANKS_SERVICE_PORT = os.environ.get("BANKS_SERVICE_PORT")
+TRANSACTION_SERVICE_PORT = os.environ.get("TRANSACTION_SERVICE_PORT")
+ACCOUNT_SERVICE_PORT = os.environ.get("ACCOUNT_SERVICE_PORT")
 
-BASE = f"http://{HOST}:8080/api"
+ACCOUNT_BASE = f"{HOST}{ACCOUNT_SERVICE_PORT }"
+TRANSACTION_BASE = f"{HOST}{TRANSACTION_SERVICE_PORT}"
+BANKS_BASE = f"{HOST}{BANKS_SERVICE_PORT}"
 headers = {"Authorization": f"Bearer {BEARER_TOKEN}"}
 
 
@@ -37,13 +42,13 @@ while selection:
             selection = False
 
             # creates dict of all members on first page
-            get_members = requests.get(BASE + "/members", headers=headers)
+            get_members = requests.get(BANKS_BASE + "/members", headers=headers)
             members_dict = get_members.json()
 
             # gets the paginated JSON and adds to original members_dict
             number_of_pages = get_members.json()["totalPages"]
             for i in range(1, number_of_pages):
-                get_page = requests.get(BASE + f"/members/?page={i}", headers=headers)
+                get_page = requests.get(BANKS_BASE + f"/members/?page={i}", headers=headers)
                 get_page_dict = get_page.json()
 
                 # adds dict record to original dictionary to parse later
@@ -61,7 +66,7 @@ while selection:
                 member_lastname = members_dict["content"][i]["applicant"]["lastName"]
 
                 # get member accounts by member_id
-                get_member_accounts = requests.get(BASE + f"/members/{member_id}/accounts", headers=headers)
+                get_member_accounts = requests.get(ACCOUNT_BASE + f"/members/{member_id}/accounts", headers=headers)
                 get_member_accounts_dict = get_member_accounts.json()
 
                 # builds list of member account types

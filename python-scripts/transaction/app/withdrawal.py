@@ -6,8 +6,13 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 BEARER_TOKEN = os.environ.get("BEARER_TOKEN")
 HOST = os.environ.get("HOST")
+# BANKS_SERVICE_PORT = os.environ.get("BANKS_SERVICE_PORT")
+ACCOUNT_SERVICE_PORT = os.environ.get("ACCOUNT_SERVICE_PORT")
+TRANSACTION_SERVICE_PORT = os.environ.get("TRANSACTION_SERVICE_PORT")
 
-BASE = f"http://{HOST}:8080/api"
+# BANKS_SERVICE_PORT = f"{HOST}{BANKS_SERVICE_PORT}"
+TRANSACTION_BASE = f"{HOST}{TRANSACTION_SERVICE_PORT}"
+ACCOUNT_BASE = f"{HOST}{ACCOUNT_SERVICE_PORT}"
 headers = {"Authorization": f"Bearer {BEARER_TOKEN}"}
 
 # returns 1 or 0 to member_account_method to continue or cancel more transactions
@@ -20,7 +25,7 @@ def withdrawal(member_name, member_id):
             print("\nWhat Account To Withdrawal From?\n")
 
             # get member accounts JSON
-            get_member_accounts = requests.get(BASE + f"/members/{member_id}/accounts", headers=headers)
+            get_member_accounts = requests.get(ACCOUNT_BASE + f"/members/{member_id}/accounts", headers=headers)
             member_accounts_dict = get_member_accounts.json()
 
             # builds dict of member accounts and values
@@ -65,7 +70,7 @@ def withdrawal(member_name, member_id):
                            "accountNumber": account_number_selection}
 
                 # posts withdrawal transaction
-                post_response = requests.post(BASE + "/transactions", json=payload, headers=headers)
+                post_response = requests.post(TRANSACTION_BASE + "/transactions", json=payload, headers=headers)
 
                 # parses response
                 withdrawal_status = post_response.json()["status"]
@@ -76,7 +81,7 @@ def withdrawal(member_name, member_id):
 
                 # get account details again
                 # ask if you would like to make another transaction:
-                get_member_account = requests.get(BASE + f"/members/{member_id}/accounts", headers=headers)
+                get_member_account = requests.get(ACCOUNT_BASE + f"/members/{member_id}/accounts", headers=headers)
                 get_member_account_dict = get_member_account.json()
 
                 # builds dict of member accounts and values

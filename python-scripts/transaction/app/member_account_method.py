@@ -11,8 +11,9 @@ sys.path.append(dir_path)
 load_dotenv(find_dotenv())
 BEARER_TOKEN = os.environ.get("BEARER_TOKEN")
 HOST = os.environ.get("HOST")
+ACCOUNT_SERVICE_PORT = os.environ.get("ACCOUNT_SERVICE_PORT")
 
-BASE = f"http://{HOST}:8080/api"
+BASE = f"{HOST}{ACCOUNT_SERVICE_PORT}"
 headers = {"Authorization": f"Bearer {BEARER_TOKEN}"}
 
 def member_account_method(member_id, member_name):

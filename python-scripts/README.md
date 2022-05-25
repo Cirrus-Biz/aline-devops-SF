@@ -5,9 +5,9 @@
 
 ### Setup
 - pip install -r requirements.txt
-- change host variable at the top of bearer_renew_token.py to the host you are sending request to
-- run bearer_renew_token.py to renew bearer token before running python applications
-- bearer_renew_token.py will write the bearer token and hostname to .env that the applications pull from
+- change host variables in .env_hosts to the appropriate values 
+- run bearer_renew_token.py to renew bearer token and set environment variables before running python applications
+- bearer_renew_token.py will write the bearer token and host variables to .env that the applications pull from
 
 ##### Go To Each Directory and Run The Main Python File (named the same as directory)
 
