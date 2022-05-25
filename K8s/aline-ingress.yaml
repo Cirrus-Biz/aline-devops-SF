@@ -5,10 +5,9 @@ metadata:
   annotations:
     kubernetes.io/ingress.class: nginx
     nginx.ingress.kubernetes.io/rewrite-target: /$2
-    # nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
-  # - host: aline.com
   - http:
       paths:
       - path: /users(/|$)(.*)
