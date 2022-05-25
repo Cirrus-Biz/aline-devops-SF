@@ -1,0 +1,49 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name:  aline-ingress
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    # nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  rules:
+  # - host: aline.com
+  - http:
+      paths:
+      - path: /users(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: aline-user
+            port:
+              number: 8070
+      - path: /underwriter(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: aline-underwriter
+            port:
+              number: 8071
+      - path: /bank(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: aline-bank
+            port:
+              number: 8072
+      - path: /transaction(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: aline-transaction
+            port:
+              number: 8073
+      - path: /account(/|$)(.*)
+        pathType: Prefix
+        backend:
+          service:
+            name: aline-account
+            port:
+              number: 8074
+
