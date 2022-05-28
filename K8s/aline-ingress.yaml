@@ -4,42 +4,108 @@ metadata:
   name:  aline-ingress
   annotations:
     kubernetes.io/ingress.class: nginx
-    nginx.ingress.kubernetes.io/rewrite-target: /$2
     nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$1
+
 spec:
   rules:
   - http:
       paths:
-      - path: /users(/|$)(.*)
-        pathType: Prefix
+
+#  ~~~~~~~~~~ USER SERVICE ~~~~~~~~~~ 
+        
+      # ability to ping health at users service pod
+      - path: "/api/user-service/(health)"
+        pathType: Exact
         backend:
           service:
             name: aline-user
             port:
               number: 8070
-      - path: /underwriter(/|$)(.*)
-        pathType: Prefix
+
+      # all user service paths
+      - path: "/api/(users/[0-9]*$|users/registration$|users$|login$)"
+        pathType: Exact
+        backend:
+          service:
+            name: aline-user
+            port:
+              number: 8070
+
+#  ~~~~~~~~~~ UNDERWRTIER SERVICE ~~~~~~~~~~ 
+
+      # ability to ping health at underwriter service pod
+      - path: "/api/underwriter-service/(health)"
+        pathType: Exact
         backend:
           service:
             name: aline-underwriter
             port:
               number: 8071
-      - path: /bank(/|$)(.*)
-        pathType: Prefix
+
+      # all underwriter service paths
+      - path: "/api/(applicants/[0-9]*$|applications/[0-9]*$|applicants$|applications$)"
+        pathType: Exact
+        backend:
+          service:
+            name: aline-underwriter
+            port:
+              number: 8071
+
+#  ~~~~~~~~~~ BANK SERVICE ~~~~~~~~~~
+
+      # ability to ping health at bank service pod
+      - path: "/api/bank-service/(health)"
+        pathType: Exact
         backend:
           service:
             name: aline-bank
             port:
               number: 8072
-      - path: /transaction(/|$)(.*)
-        pathType: Prefix
+
+      # all banks service paths
+      - path: "/api/(banks/.*$|members/[0-9]*$|members$|banks$|branches$)"
+        pathType: Exact
+        backend:
+          service:
+            name: aline-bank
+            port:
+              number: 8072
+
+#  ~~~~~~~~~~ TRANSACTION SERVICE ~~~~~~~~~~ 
+
+      # ability to ping health at transaction service pod
+      - path: "/api/transaction-service/(health)"
+        pathType: Exact
         backend:
           service:
             name: aline-transaction
             port:
               number: 8073
-      - path: /account(/|$)(.*)
-        pathType: Prefix
+ 
+      # all transactions service paths
+      - path: "/api/((members/[0-9]*/transactions$|accounts/[0-9]*/transactions$|transactions/[0-9]*$|transactions/transfer$|transactions$))"
+        pathType: Exact
+        backend:
+          service:
+            name: aline-transaction
+            port:
+              number: 8073
+
+#  ~~~~~~~~~~ ACCOUNT SERVICE ~~~~~~~~~~ 
+               
+      # ability to ping health at account service pod
+      - path: "/api/account-service/(health)"
+        pathType: Exact
+        backend:
+          service:
+            name: aline-account
+            port:
+              number: 8074
+
+      # all account service paths
+      - path: "/api/(members/[0-9]*/accounts$|accounts/.*|accounts$)"
+        pathType: Exact
         backend:
           service:
             name: aline-account
