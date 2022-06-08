@@ -5,6 +5,10 @@ output "vpc_id" {
 output "vpc_cidr" {
   value = aws_vpc.vpc.cidr_block
 }
+
+output "internet_gateway_id" {
+  value = aws_internet_gateway.internet_gateway.id
+}
  
 output "vpc_public_subnets" {
   # returns map of public subnet id to cidr block
@@ -20,4 +24,24 @@ output "vpc_private_subnets" {
     for subnet in aws_subnet.private :
     subnet.id => subnet.cidr_block
   }
+}
+
+output "nat_eip" {
+    value = aws_eip.nat_eip.id
+}
+
+output "aws_route_table_public" {
+    value = aws_route_table.public.id
+}
+
+output "aws_route_table_private" {
+    value = aws_route_table.private.id
+}
+
+output "aws_network_acl_public" {
+    value = aws_network_acl.nacl_public.id
+}
+
+output "aws_network_acl_private" {
+    value = aws_network_acl.nacl_private.id
 }

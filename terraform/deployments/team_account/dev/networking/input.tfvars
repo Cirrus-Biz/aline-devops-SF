@@ -1,6 +1,6 @@
 infra_region = "us-east-1"
 infra_env = "dev"
-project_name = "aline"
+project_name = "aline-SF"
 vpc_cidr_block = "10.0.0.0/17"
 public_subnet_numbers = {
                         "us-east-1a" = 1
