@@ -14,7 +14,7 @@ spec:
 
 #  ~~~~~~~~~~ USER SERVICE ~~~~~~~~~~ 
         
-      # ability to ping health at users service pod
+      # ability to ping /health at users service pod
       - path: "/api/user-service/(health)"
         pathType: Exact
         backend:
@@ -24,6 +24,12 @@ spec:
               number: 8070
 
       # all user service paths
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      # /users/registration
+      # /users/{id}
+      # /users
+      # /login
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       - path: "/api/(users/[0-9]*$|users/registration$|users$|login$)"
         pathType: Exact
         backend:
@@ -34,7 +40,7 @@ spec:
 
 #  ~~~~~~~~~~ UNDERWRTIER SERVICE ~~~~~~~~~~ 
 
-      # ability to ping health at underwriter service pod
+      # ability to ping /health at underwriter service pod
       - path: "/api/underwriter-service/(health)"
         pathType: Exact
         backend:
@@ -44,6 +50,12 @@ spec:
               number: 8071
 
       # all underwriter service paths
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      # /applicants/{id}
+      # /applicants
+      # /applications
+      # /applications/{id}
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       - path: "/api/(applicants/[0-9]*$|applications/[0-9]*$|applicants$|applications$)"
         pathType: Exact
         backend:
@@ -54,7 +66,7 @@ spec:
 
 #  ~~~~~~~~~~ BANK SERVICE ~~~~~~~~~~
 
-      # ability to ping health at bank service pod
+      # ability to ping /health at bank service pod
       - path: "/api/bank-service/(health)"
         pathType: Exact
         backend:
@@ -64,6 +76,16 @@ spec:
               number: 8072
 
       # all banks service paths
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      # /members
+      # /members/{membershipId}
+      # /branches
+      # /banks
+      # /banks/routing/{id}
+      # /banks/routing
+      # /banks/id/{bankId}
+      # /banks/id
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       - path: "/api/(banks/.*$|members/[0-9]*$|members$|banks$|branches$)"
         pathType: Exact
         backend:
@@ -74,7 +96,7 @@ spec:
 
 #  ~~~~~~~~~~ TRANSACTION SERVICE ~~~~~~~~~~ 
 
-      # ability to ping health at transaction service pod
+      # ability to ping /health at transaction service pod
       - path: "/api/transaction-service/(health)"
         pathType: Exact
         backend:
@@ -84,6 +106,13 @@ spec:
               number: 8073
  
       # all transactions service paths
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      # /transaction
+      # /transactions/transfer
+      # /transactions/{id}
+      # /member/{id}/transactions
+      # /accounts/{id}/transactions
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       - path: "/api/((members/[0-9]*/transactions$|accounts/[0-9]*/transactions$|transactions/[0-9]*$|transactions/transfer$|transactions$))"
         pathType: Exact
         backend:
@@ -94,7 +123,7 @@ spec:
 
 #  ~~~~~~~~~~ ACCOUNT SERVICE ~~~~~~~~~~ 
                
-      # ability to ping health at account service pod
+      # ability to ping /health at account service pod
       - path: "/api/account-service/(health)"
         pathType: Exact
         backend:
@@ -104,6 +133,11 @@ spec:
               number: 8074
 
       # all account service paths
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+      # /member/{memberId}/accounts
+      # /accounts
+      # /accounts/{id}
+      # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
       - path: "/api/(members/[0-9]*/accounts$|accounts/.*|accounts$)"
         pathType: Exact
         backend:
@@ -111,4 +145,3 @@ spec:
             name: aline-account
             port:
               number: 8074
-
