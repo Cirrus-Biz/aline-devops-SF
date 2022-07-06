@@ -1,0 +1,136 @@
+- name: configure jenkins worker node
+  hosts: jenkins_worker_sf
+
+  tasks:
+
+    - name: update and upgrade apt packages
+      become: yes
+      apt:
+        upgrade: yes
+        update_cache: yes
+
+    - name: install openjdk java
+      become: yes
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - openjdk-17-jdk
+
+    - name: install maven
+      become: yes
+      apt:
+        name: "{{ item }}"
+        state: present
+      with_items:
+        - maven
+
+    - name: install or update git package
+      become: yes
+      apt:
+        name: git
+        state: latest
+        update_cache: yes
+
+    - name: install unzip & curl & wget
+      become: yes
+      package: name="{{ item }}" state=present
+      with_items:
+        - unzip
+        - curl
+        - wget
+
+    - name: check if docker is installed
+      become: yes
+      shell: docker --version
+      register: docker_installed
+      ignore_errors: true
+      changed_when: docker_installed.rc != 0
+
+    - name: install docker engine
+      shell: "{{ item }}"
+      with_items:
+        - sudo apt-get install ca-certificates curl gnupg lsb-release -y
+        - curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+        - echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+        - sudo apt-get update
+        - sudo apt-get install docker-ce docker-ce-cli containerd.io docker-compose-plugin -y
+      when: docker_installed.changed
+
+    - name: check if awscli is installed
+      become: yes
+      shell: aws --version
+      register: awscli_installed
+      ignore_errors: true
+      changed_when: awscli_installed.rc != 0
+
+    - name: download the awscli bundle
+      get_url: url="https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" dest="~/awscliv2.zip"
+      register: aws_cli_download_bundle
+      when: awscli_installed.changed
+
+    - name: unarchive the awscli installer
+      unarchive: 
+        src: ~/awscliv2.zip 
+        dest: "~/" 
+        remote_src: yes
+      when: aws_cli_download_bundle.changed
+      register: aws_cli_unarchive_installer
+
+    - name: run awscli installer
+      shell: sudo ./aws/install
+      when: aws_cli_unarchive_installer.changed
+
+    - name: check if terraform is installed
+      become: yes
+      shell: terraform -help
+      register: terraform_installed
+      ignore_errors: true
+      changed_when: terraform_installed.rc != 0
+
+    - name: install terraform
+      become: yes
+      shell: "{{ item }}"
+      with_items:
+        - sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
+        - curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
+        - sudo apt-add-repository "deb [arch=amd64] https://apt.releases.hashicorp.com $(lsb_release -cs) main" -y
+        - sudo apt-get update && sudo apt-get install terraform
+      ignore_errors: yes
+      when: terraform_installed.changed
+
+
+- name: configure swift worker
+  hosts: swift_worker_sf
+
+  tasks:
+
+    - name: check if certbot is installed
+      become: yes
+      shell: snap list certbot
+      register: certbot_installed
+      ignore_errors: true
+      changed_when: certbot_installed.rc != 0
+
+    - name: install certbot tool to manage letsencrypt certificates
+      become: yes
+      snap:
+        name: certbot
+        classic: yes
+        channel: latest/stable
+      when: certbot_installed.changed
+
+    - name: test if certbot correct version is installed
+      become: yes
+      shell: snap list certbot
+      register: certbot_version
+      changed_when: certbot_installed.rc != 0
+      failed_when: '"latest/stable" not in certbot_version.stdout'
+
+    - name: install openssh-client
+      become: yes
+      apt:
+        name: "{{ item }}"
+        state: latest
+      with_items:
+        - openssh-client

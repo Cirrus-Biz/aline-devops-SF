@@ -1,0 +1,15 @@
+# file must end in aws_ec2
+plugin: aws_ec2
+aws_profile: aline-sf
+regions:
+  - us-east-1
+
+hostnames:
+  - ip-address
+
+keyed_groups:
+  - prefix: name_you_want
+    key: name_from_json  # to get nexts name.key
+
+groups:
+  ansible_sf: "'Ansible-SF' in tags.Ansible"

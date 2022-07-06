@@ -1,0 +1,11 @@
+plugin: aws_ec2
+aws_profile: aline-sf
+regions:
+  - us-east-1
+
+hostnames:
+  - ip-address
+
+groups:
+  jenkins_worker_sf: "'Jenkins-Worker-SF' in tags.Ansible"
+  swift_worker_sf: "'Swift-Worker-SF' in tags.Ansible"

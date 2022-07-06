@@ -1,0 +1,6 @@
+- name: ping my servers
+  hosts: test
+
+  tasks:
+    - name: ping dynamic inventory
+      ping:

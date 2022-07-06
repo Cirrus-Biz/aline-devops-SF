@@ -1,6 +1,6 @@
 version: "3.9"
 
-x-aws-loadbalancer: ${ADCU_LOADBALANCER_ARN}
+# x-aws-loadbalancer: ${ADCU_LOADBALANCER_ARN}
 
 networks:
   default:
